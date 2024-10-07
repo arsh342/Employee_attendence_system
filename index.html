@@ -429,6 +429,80 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* New styles for enhanced navbar */
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-item {
+      position: relative;
+      margin-left: 20px;
+      cursor: pointer;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: var(--color-sidebar-bg);
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: none;
+      z-index: 1000;
+    }
+
+    .dropdown.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .dropdown-item {
+      padding: 10px 20px;
+      color: var(--color-text);
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-item:hover {
+      background-color: var(--color-sidebar-hover-bg);
+      color: var(--color-sidebar-hover-text);
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+    }
+
+    #searchInput {
+      background-color: var(--color-sidebar-bg);
+      border: none;
+      border-radius: 20px;
+      padding: 5px 15px;
+      margin-right: 10px;
+      color: var(--color-text);
+      transition: width 0.3s ease;
+      width: 0;
+      opacity: 0;
+    }
+
+    #searchInput.show {
+      width: 200px;
+      opacity: 1;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 
@@ -441,12 +515,36 @@
         <span class="material-icons-outlined">menu</span>
       </div>
       <div class="header-left">
-        <span class="material-icons-outlined">search</span>
+        <div class="search-container">
+          <input type="text" id="searchInput" placeholder="Search...">
+          <span class="material-icons-outlined" id="searchBtn">search</span>
+        </div>
       </div>
       <div class="header-right">
-        <span class="material-icons-outlined">notifications</span>
-        <span class="material-icons-outlined">email</span>
-        <span class="material-icons-outlined">account_circle</span>
+        <div class="nav-item" id="notificationsBtn">
+          <span class="material-icons-outlined">notifications</span>
+          <div class="dropdown" id="notificationsDropdown">
+            <a href="#" class="dropdown-item">New message received</a>
+            <a href="#" class="dropdown-item">Your post was liked</a>
+            <a href="#" class="dropdown-item">You have a new follower</a>
+          </div>
+        </div>
+        <div class="nav-item" id="emailBtn">
+          <span class="material-icons-outlined">email</span>
+          <div class="dropdown" id="emailDropdown">
+            <a href="#" class="dropdown-item">Inbox</a>
+            <a href="#" class="dropdown-item">Sent</a>
+            <a href="#" class="dropdown-item">Drafts</a>
+          </div>
+        </div>
+        <div class="nav-item" id="accountBtn">
+          <span class="material-icons-outlined">account_circle</span>
+          <div class="dropdown" id="accountDropdown">
+            <a href="#" class="dropdown-item">Profile</a>
+            <a href="#" class="dropdown-item">Settings</a>
+            <a href="#" class="dropdown-item">Logout</a>
+          </div>
+        </div>
       </div>
     </header>
     <!-- End Header -->
@@ -1107,6 +1205,64 @@
     // Initial setup
     updateStudentTable();
     updateDashboardCounts();
+    // New JavaScript for enhanced navbar functionality
+    document.addEventListener('DOMContentLoaded', function () {
+      const searchBtn = document.getElementById('searchBtn');
+      const searchInput = document.getElementById('searchInput');
+      const notificationsBtn = document.getElementById('notificationsBtn');
+      const emailBtn = document.getElementById('emailBtn');
+      const accountBtn = document.getElementById('accountBtn');
+      const notificationsDropdown = document.getElementById('notificationsDropdown');
+      const emailDropdown = document.getElementById('emailDropdown');
+      const accountDropdown = document.getElementById('accountDropdown');
+
+      function toggleDropdown(dropdown) {
+        dropdown.classList.toggle('show');
+      }
+
+      function closeAllDropdowns() {
+        notificationsDropdown.classList.remove('show');
+        emailDropdown.classList.remove('show');
+        accountDropdown.classList.remove('show');
+      }
+
+      searchBtn.addEventListener('click', function () {
+        searchInput.classList.toggle('show');
+        if (searchInput.classList.contains('show')) {
+          searchInput.focus();
+        }
+      });
+
+      notificationsBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeAllDropdowns();
+        toggleDropdown(notificationsDropdown);
+      });
+
+      emailBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeAllDropdowns();
+        toggleDropdown(emailDropdown);
+      });
+
+      accountBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeAllDropdowns();
+        toggleDropdown(accountDropdown);
+      });
+
+      document.addEventListener('click', function () {
+        closeAllDropdowns();
+      });
+
+      searchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+          alert('Searching for: ' + searchInput.value);
+          searchInput.value = '';
+          searchInput.classList.remove('show');
+        }
+      });
+    });
   </script>
 </body>
 
